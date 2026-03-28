@@ -25,7 +25,6 @@ services:
       - db
     volumes:
       - matomo_data:/var/www/html:z
-      - app
     env_file:
       - ./env_files/.env.timezone
     environment:
@@ -52,14 +51,4 @@ services:
 
 volumes:
   db_data:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${VOLUMNES_DIR}/db_data
-      o: bind
   matomo_data:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${VOLUMNES_DIR}/matomo_data
-      o: bind

@@ -8,4 +8,3 @@ The following environment variables are also honored for configuring your Matomo
 
 - `MARIADB_ROOT_PASSWORD`
 - `MARIADB_PASSWORD`
-- `VOLUMNES_DIR`

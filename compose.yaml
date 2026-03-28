@@ -1,0 +1,65 @@
+name: matomo
+
+services:
+  db:
+    image: mariadb:lts
+    command: --max-allowed-packet=64MB
+    restart: always
+    volumes:
+      - db_data:/var/lib/mysql:Z
+    env_file:
+      - ./env_files/.env.timezone
+    environment:
+      - MARIADB_AUTO_UPGRADE=1
+      - MARIADB_DATABASE=matomo
+      - MARIADB_DISABLE_UPGRADE_BACKUP=1
+      - MARIADB_INITDB_SKIP_TZINFO=1
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD}
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+      - MARIADB_USER=matomo
+
+  app:
+    image: matomo:fpm-alpine
+    restart: always
+    depends_on:
+      - db
+    volumes:
+      - matomo_data:/var/www/html:z
+      - app
+    env_file:
+      - ./env_files/.env.timezone
+    environment:
+      - MATOMO_DATABASE_ADAPTER=mysql
+      - MATOMO_DATABASE_DBNAME=matomo
+      - MATOMO_DATABASE_HOST=db
+      - MATOMO_DATABASE_PASSWORD=${MARIADB_PASSWORD}
+      - MATOMO_DATABASE_TABLES_PREFIX=matomo_
+      - MATOMO_DATABASE_USERNAME=matomo
+      - PHP_MEMORY_LIMIT=2048M
+
+  web:
+    image: nginx:alpine
+    restart: always
+    depends_on:
+      - app
+    env_file:
+      - ./env_files/.env.timezone
+    volumes:
+      - matomo_data:/var/www/html:z,ro
+      - ./matomo.conf:/etc/nginx/conf.d/default.conf:z,ro
+    ports:
+      - 8080:80
+
+volumes:
+  db_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${VOLUMNES_DIR}/db_data
+      o: bind
+  matomo_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${VOLUMNES_DIR}/matomo_data
+      o: bind

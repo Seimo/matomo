@@ -2,9 +2,21 @@
 
 
 
-## Installation
+## Deployment
 
-The following environment variables are used for configuring your Matomo instance:
+### Launch a server instance
 
-- `MARIADB_ROOT_PASSWORD`
-- `MARIADB_PASSWORD`
+
+Copy the `.env.example` into `.env` file:
+
+```shell
+cp .env.example .env
+vi .env
+```
+
+
+Run and build the docker containers:
+
+```shell
+docker compose up -d
+```
